@@ -4,13 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
-
-const bigtable = new Bigtable({
-  projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
-});
-
-const instance = bigtable.instance(process.env.BIGTABLE_INSTANCE_ID);
-const table = instance.table('assignment_job_applications');
+export const runtime = 'nodejs';
 
 // Types
 const JobApplicationStatus = {
@@ -48,9 +42,19 @@ const validateJobApplication = (data) => {
   return null;
 };
 
+const getTable = () => {
+  const bigtable = new Bigtable({
+    projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+  });
+
+  const instance = bigtable.instance(process.env.BIGTABLE_INSTANCE_ID);
+  return instance.table('assignment_job_applications');
+};
+
 // GET handler for fetching job applications
 export async function GET() {
   try {
+    const table = getTable();
     const [rows] = await table.getRows();
     const data = rows.map(row => {
       const rowData = row.data?.info || {};
@@ -82,6 +86,7 @@ export async function POST(request) {
       return NextResponse.json(createErrorResponse(validationError), { status: 400 });
     }
 
+    const table = getTable();
     const timestamp = new Date().toISOString();
     const rowKey = uuidv4();
     
