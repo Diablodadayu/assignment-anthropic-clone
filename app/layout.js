@@ -1,16 +1,14 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Anthropic - AI research and products that put safety at the frontier',
-  description: 'AI research and products that put safety at the frontier',
+  title: 'Anthropic Clone',
+  description: 'A clone of the Anthropic website',
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        <main>{children}</main>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
