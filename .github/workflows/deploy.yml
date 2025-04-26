@@ -15,6 +15,7 @@ env:
   PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
   SERVICE_NAME: anthropic-clone
   REGION: us-central1
+  REPOSITORY: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}-docker.pkg.dev
 
 jobs:
   setup-build-deploy:
@@ -37,24 +38,32 @@ jobs:
         project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
 
     - name: Configure Docker
-      run: gcloud auth configure-docker
+      run: gcloud auth configure-docker $REPOSITORY
+
+    - name: Create Artifact Registry repository if not exists
+      run: |
+        gcloud artifacts repositories describe $SERVICE_NAME --location=$REGION || \
+        gcloud artifacts repositories create $SERVICE_NAME \
+          --repository-format=docker \
+          --location=$REGION \
+          --description="Docker repository for $SERVICE_NAME"
 
     - name: Build
       run: |-
         docker build \
-          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
-          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:latest" \
+          --tag "$REPOSITORY/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+          --tag "$REPOSITORY/$PROJECT_ID/$SERVICE_NAME:latest" \
           .
 
     - name: Push
       run: |-
-        docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
-        docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:latest"
+        docker push "$REPOSITORY/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+        docker push "$REPOSITORY/$PROJECT_ID/$SERVICE_NAME:latest"
 
     - name: Deploy
       run: |-
         gcloud run deploy $SERVICE_NAME \
-          --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+          --image "$REPOSITORY/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
           --platform managed \
           --region $REGION \
           --allow-unauthenticated \
