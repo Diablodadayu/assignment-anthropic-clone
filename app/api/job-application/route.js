@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { Bigtable } from '@google-cloud/bigtable';
 import { v4 as uuidv4 } from 'uuid';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+
 const bigtable = new Bigtable({
   projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
 });
@@ -50,12 +53,12 @@ export async function GET() {
   try {
     const [rows] = await table.getRows();
     const data = rows.map(row => {
-      const data = row.data.info;
+      const rowData = row.data?.info || {};
       return {
-        name: data.name[0].value,
-        email: data.email[0].value,
-        position: data.position[0].value,
-        timestamp: data.timestamp[0].value,
+        name: rowData.name?.[0]?.value || '',
+        email: rowData.email?.[0]?.value || '',
+        position: rowData.position?.[0]?.value || '',
+        timestamp: rowData.timestamp?.[0]?.value || new Date().toISOString(),
       };
     });
 
