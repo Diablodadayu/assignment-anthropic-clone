@@ -1,0 +1,57 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [ main, dev ]
+  # Pull request trigger is important for:
+  # 1. Testing deployments before merging to main
+  # 2. Validating builds in isolation
+  # 3. Catching issues early in the CI pipeline
+  # 4. Allowing reviewers to test changes
+  pull_request:
+    branches: [ main, dev ]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  SERVICE_NAME: anthropic-clone
+  REGION: us-central1
+
+jobs:
+  setup-build-deploy:
+    name: Setup, Build, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        install_components: 'gke-gcloud-auth-plugin'
+
+    - name: Configure Docker
+      run: gcloud auth configure-docker
+
+    - name: Build
+      run: |-
+        docker build \
+          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:latest" \
+          .
+
+    - name: Push
+      run: |-
+        docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+        docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:latest"
+
+    - name: Deploy
+      run: |-
+        gcloud run deploy $SERVICE_NAME \
+          --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+          --platform managed \
+          --region $REGION \
+          --allow-unauthenticated \
+          --set-env-vars="GOOGLE_CLOUD_PROJECT_ID=${{ secrets.GOOGLE_CLOUD_PROJECT_ID }},BIGTABLE_INSTANCE_ID=${{ secrets.BIGTABLE_INSTANCE_ID }}" 
