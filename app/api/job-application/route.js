@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const bigtable = new Bigtable({
   projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 });
 
 const instance = bigtable.instance(process.env.BIGTABLE_INSTANCE_ID);
@@ -62,6 +61,7 @@ export async function GET() {
 
     return NextResponse.json(createListSuccessResponse(data));
   } catch (error) {
+    console.error('Error fetching job applications:', error);
     return NextResponse.json(
       createListErrorResponse('Failed to fetch job applications'),
       { status: 500 }
@@ -104,6 +104,7 @@ export async function POST(request) {
 
     return NextResponse.json(createSuccessResponse(jobApplication), { status: 201 });
   } catch (error) {
+    console.error('Error processing job application:', error);
     return NextResponse.json(
       createErrorResponse('Failed to process job application'),
       { status: 500 }
