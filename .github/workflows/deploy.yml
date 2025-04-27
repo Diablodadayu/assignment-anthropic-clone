@@ -2,14 +2,8 @@ name: Deploy to Cloud Run
 
 on:
   push:
-    branches: [ main, dev ]
-  # Pull request trigger is important for:
-  # 1. Testing deployments before merging to main
-  # 2. Validating builds in isolation
-  # 3. Catching issues early in the CI pipeline
-  # 4. Allowing reviewers to test changes
-  pull_request:
-    branches: [ main, dev ]
+    branches: [ main ]
+
 
 env:
   PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}

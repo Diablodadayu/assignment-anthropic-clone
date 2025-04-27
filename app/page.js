@@ -43,7 +43,7 @@ export default function Home() {
 
       <section className={styles.hero}>
         <div className={styles.container}>
-          <h1>AI research and products that put safety at the frontier</h1>
+          <h1>AI <a>research</a> and <a>products</a> that put safety at the frontier</h1>
           <div className={styles.heroCards}>
             <div className={styles.card}>
               <h3>Claude.ai</h3>
@@ -86,7 +86,7 @@ export default function Home() {
             <div className={styles.coreViewCard}>
               <div className={styles.coreViewIcon}>
                 <Image 
-                  src="/images/core-view-icon.svg" 
+                  src="/images/anthropic-policy.svg" 
                   alt="Core view icon"
                   width={1000}
                   height={1000}
@@ -97,7 +97,7 @@ export default function Home() {
             <div className={styles.coreViewCard}>
               <div className={styles.coreViewIcon}>
                 <Image 
-                  src="/images/core-view-icon.svg" 
+                  src="/images/anthropic-academy.svg" 
                   alt="Core view icon"
                   width={1000}
                   height={1000}
@@ -112,24 +112,50 @@ export default function Home() {
       <section className={styles.featured}>
         <div className={styles.container}>
           <h2>Featured</h2>
-          <div className={styles.featuredGrid}>
-            <div className={styles.featuredCard}>
+          <ul className={styles.featuredList}>
+            <li>
               <h3>Tracing the thoughts of a large language model</h3>
-              <p>Interpretability • Mar 27, 2025</p>
-            </div>
-            <div className={styles.featuredCard}>
+              <div className={styles.metadata}>
+                <p className={styles.category}>Interpretability</p>
+                <p className={styles.date}>Mar 27, 2025</p>
+              </div>
+            </li>
+            <li>
               <h3>Anthropic Economic Index</h3>
-              <p>Societal Impacts • Mar 27, 2025</p>
-            </div>
-            <div className={styles.featuredCard}>
+              <div className={styles.metadata}>
+                <p className={styles.category}>Societal Impacts</p>
+                <p className={styles.date}>Mar 27, 2025</p>
+              </div>
+            </li>
+            <li>
               <h3>Claude 3.7 Sonnet and Claude Code</h3>
-              <p>Product • Feb 24, 2025</p>
-            </div>
-            <div className={styles.featuredCard}>
+              <div className={styles.metadata}>
+                <p className={styles.category}>Product</p>
+                <p className={styles.date}>Feb 24, 2025</p>
+              </div>
+            </li>
+            <li>
               <h3>Claude&apos;s extended thinking</h3>
-              <p>Product • Feb 24, 2025</p>
-            </div>
-          </div>
+              <div className={styles.metadata}>
+                <p className={styles.category}>Product</p>
+                <p className={styles.date}>Feb 24, 2025</p>
+              </div>
+            </li>
+            <li>
+              <h3>Alignment faking in large language models</h3>
+              <div className={styles.metadata}>
+                <p className={styles.category}>Alignment science</p>
+                <p className={styles.date}>Dec 18, 2024</p>
+              </div>
+            </li>
+            <li>
+              <h3>Introducing the Model Context Protocol</h3>
+              <div className={styles.metadata}>
+                <p className={styles.category}>Product</p>
+                <p className={styles.date}>Nov 25, 2024</p>
+              </div>
+            </li>
+          </ul>
         </div>
       </section>
 
